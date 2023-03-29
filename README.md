@@ -12,6 +12,7 @@ This is the repository that hosts the racecar code for CS 321.
 		```
 	
 	- If that doesn't work, do it manually: https://elinux.org/Beagleboard:Expanding_File_System_Partition_On_A_microSD (For "Do you want to remove the signature? [Y]es/[N]o:", type Y) 
+	- You may need to mount the new partition (Use df -h to check if your partition is mounted already). https://www.simplified.guide/linux/disk-mount
 		
 - Get a newer SD card if possible (Video FPS is really low on older cards for some reason.. *maybe R/W speed?*)
 

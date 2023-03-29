@@ -26,11 +26,10 @@ video = cv2.VideoWriter('frame.avi', cv2.VideoWriter_fourcc(*'MJPG'), 12, size)
 i = 0
 while i < 500:
 
-    #temp = cam.read()
-    frame = cam.read()
+    temp, frame = cam.read()
 
     #While a frame is read, adding it to the frame.avi video file
-    if frame == True:
+    if temp == True:
         video.write(frame)
 
         #Display frame for checking
