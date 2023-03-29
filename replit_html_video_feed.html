@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Socket Input and Output Example</title>
+  <!-- socket script that is needed to accept input and output, neccessary python code
+  to accept more input and output will be in the new tab on the top -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+  <!-- Formatting pt1 style below video -->
+  <style>
+    video {
+      width: 100%;
+      max-width: 640px;
+      height: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- VIDEO FEED -->
+  <video id="video" autoplay></video>
+  <canvas id="canvas"></canvas>
+  <script>
+    const video = document.getElementById('video');
+//pt2 here
+    const socket = io();
+
+    // Set up socket event listeners
+    socket.on('connect', () => {
+      console.log('Connected to server.');
+    });
+
+//pt3 here
+
+    // Accepts the media, needs the socket information, then stream it.
+    navigator.mediaDevices.getUserMedia({video: true})
+      .then((stream) => {
+        video.srcObject = stream;
+      })
+      .catch((error) => {
+        console.error('Error accessing video stream:', error);
+      });
+  </script>
+</body>
+
+</html>
