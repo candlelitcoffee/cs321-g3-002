@@ -1,0 +1,41 @@
+import Adafruit_BBIO.PWM as PWM
+from controller_pytest import XboxController
+
+servoPin = "P9_14"
+loop = 0
+PWM.start(servoPin,3,50)
+
+# Initialize Xbox controller
+joy = XboxController()
+
+
+# Move the square based on Xbox controller input
+def move_square():
+    x, y, a, b, rb = joy.read()
+    if (x == -1):
+        dutyCycle = 0.55 * (float(x) + 3)
+        PWM.set_duty_cycle(servoPin, dutyCycle)
+    if (y > 0.89) :
+        dutyCycle=0.055*(float(y) + 3)
+        PWM.set_duty_cycle(servoPin,dutyCycle)   
+
+        
+
+#make it straight
+    if (x != -1):
+
+        starting = (0.055*(float(90)) + 3)
+        PWM.set_duty_cycle(servoPin, starting)
+    if (y < 0.89) :
+        starting = (0.055*(float(90)) + 3)
+        PWM.set_duty_cycle(servoPin, starting)
+
+    if (rb == 1) :
+        loop = 1
+
+
+
+while (loop != 1) :
+    move_square()
+
+
