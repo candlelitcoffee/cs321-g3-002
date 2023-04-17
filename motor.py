@@ -8,7 +8,7 @@ PWM.start(DRIVE_PIN, 7.5, 50)
 
 def changeRPM(dutyCycle):
     dutyCycle = float(dutyCycle)
-    if 10.0 >= dutyCycle >= 0.1:
+    if 10.0 >= dutyCycle >= 5.0:
         PWM.set_duty_cycle(DRIVE_PIN, dutyCycle)
 
 def calibrate():
@@ -45,6 +45,8 @@ def main():
     print("Enter duty cycle value & increment by 0.5 (press enter to exit)")
     inp = input()
     while(inp != ''):
+        if (input == '') :
+            break
         changeRPM(inp)
         time.sleep(1)
         inp = input()
