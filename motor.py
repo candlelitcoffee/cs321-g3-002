@@ -7,6 +7,7 @@ DRIVE_PIN = "P9_16"
 PWM.start(DRIVE_PIN, 7.5, 50)
 
 def changeRPM(dutyCycle):
+    dutyCycle = float(dutyCycle)
     if 10.0 >= dutyCycle >= 5.0:
         PWM.set_duty_cycle(DRIVE_PIN, dutyCycle)
 
@@ -45,7 +46,7 @@ def main():
     inp = input()
     while(inp != ''):
         changeRPM(inp)
-        sleep(1)
+        time.sleep(1)
         inp = input()
 
     #setting to stop position so car doesn't fly to space
