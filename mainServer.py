@@ -1,21 +1,54 @@
+
 # first of all import the socket library
 import socket
-import Adafruit_BBIO.PWM as PWM
+import time
+#import Adafruit_BBIO.PWM as PWM
+DRIVE_PIN = "P9_16"
+SERVO_PIN = "P9_14"
 
-def turn(num):
-    servoPin = "P9_14"
-    PWM.start(servoPin,3,50)
-    starting = (0.055*(float(num)) + 3)
-    PWM.set_duty_cycle(servoPin, starting)
+#starting position
+#PWM.start(DRIVE_PIN,7.5,50)
+#PWM.start(SERVO_PIN,3,50)
+#____________________________
+
+def drive(num):
+    if 10.0 >= num >= 5.0:
+        #PWM.set_duty_cycle(DRIVE_PIN, num)
+
+
+def calibrate():
+#def calibrate(inp):
+    PWM.set_duty_cycle(DRIVE_PIN, 0.0)
+    print("Make sure battery is connected but switch is OFF.  Press ENTER to continue")
+    inp = input()
+    if inp == '':
+        PWM.set_duty_cycle(DRIVE_PIN, 10.0)
+        print("Turn the switch ON now. You will hear two beeps then press Enter")
+        inp = input()
+        if inp == '':            
+            PWM.set_duty_cycle(DRIVE_PIN, 5.0)
+            print ("Working...")
+            time.sleep(7)
+            print ("Wait for it ....")
+            time.sleep (5)
+            print ("Almost there.....")
+            PWM.set_duty_cycle(DRIVE_PIN, 0.0)
+            time.sleep(2)
+            print ("Arming ESC now...")
+            PWM.set_duty_cycle(DRIVE_PIN, 5.0)
+            time.sleep(1)
+            print ("ESC is armed (You should have heard another beep).  You can now drive the car")
+            PWM.set_duty_cycle(DRIVE_PIN, 7.5)
+            print("I have finished running\n")
+
 def main():
 
 # next create a socket object
     s = socket.socket()
     print ("Socket successfully created")
 
-# reserve a port on your computer in our
-# case it is 12345 but it can be anything
-    port = 55555
+# reserve a port on your computer 
+    port = 55554
 
 # Next bind to the port
 # we have not typed any ip in the ip field
@@ -39,16 +72,41 @@ def main():
 
 # send a thank you message to the client. encoding to send byte type.
         c.send('Thank you for connecting'.encode())
-        print("here what I got: ")
-        buf = ''
-        num =1
-        while(num >= 0):
-            buf = c.recv(1024)
-            strings = buf.decode('utf8')
-            print("the data is "+strings)
-            num = int(strings)
-            print(num)
-            turn(num)
+
+        calibrate()
+        #calibrate('')
+        direction = 'i'
+
+        servo_pos = 3
+        drive_pos = 7.5
+
+        while(direction != 'q'):
+            direction = c.recv(1024).decode()
+           
+            #strings = buf.decode()
+            print("the buf is "+direction)
+            #drive(num)
+            if(direction == 'a'): #left
+                print("i am turning left")
+                servo_pos += 0.05
+                servo_cycle = (0.055*(float(servo_pos)) + 3)
+               # PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
+            elif(direction == 'd'): #right
+                print("I am truning right")
+                servo_pos -= 0.05
+                servo_cycle = (0.055*(float(servo_pos)) + 3)
+               # PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
+            elif(direction == 'w'): #forward
+                print("I am going forward")
+                drive_pos += 0.05
+                if 10.0 >= drive_pos >= 5.0:
+                    PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+            elif(direction == 's'): #backward
+                print("I am going backward")
+                drive_pos -= 0.05
+                if 10.0 >= drive_pos >= 5.0:
+                    PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+
         c.close()
         break
 main()
