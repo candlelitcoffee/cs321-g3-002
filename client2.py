@@ -1,11 +1,13 @@
 # Import socket module
-import socket			
+from __future__ import print_function
+from inputs import get_gamepad	
+import socket		
 
 # Create a socket object
 s = socket.socket()		
 
 # Define the port on which you want to connect
-port = 55555			
+port = 55554			
 
 # connect to the server on local computer
 s.connect(('192.168.59.44', port))
@@ -13,13 +15,25 @@ s.connect(('192.168.59.44', port))
 # receive data from the server and decoding to get the string.
 print (s.recv(1024).decode())
 data=''
-angle =10
-while(data != "stop"):
-    print("what angle buddy:\n")
-    angle = input()
-#    s.send(str(angle).encode('utf8'))
-    data = str(angle).encode('utf8')
-    s.send(data)
+while 1:
+    events = get_gamepad()
+    for event in events:
+        if('ABS_X' in event.code):        
+            #turn right
+            if(event.state > 0):
+                print("R")
+                s.send('r'.endcode())        
+            #turn  left
+            if(event.state < 0):
+                print("L")
+                s.send('l'.endcode())
+        if('BTN_SOUTH' in event.code and event.state==1):
+            print("W")
+            s.send('w'.endcode())
+                
+        if('BTN_EAST' in event.code and event.state==1):
+            print("S")
+            s.send('s'.endcode())
 # close the connection
 s.close()	
 	
