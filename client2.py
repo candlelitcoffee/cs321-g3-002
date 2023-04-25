@@ -22,18 +22,18 @@ while 1:
             #turn right
             if(event.state > 0):
                 print("R")
-                s.send('r'.endcode())        
+                s.send('r'.encode())        
             #turn  left
             if(event.state < 0):
                 print("L")
-                s.send('l'.endcode())
+                s.send('l'.encode())
         if('BTN_SOUTH' in event.code and event.state==1):
             print("W")
-            s.send('w'.endcode())
+            s.send('w'.encode())
                 
         if('BTN_EAST' in event.code and event.state==1):
             print("S")
-            s.send('s'.endcode())
+            s.send('s'.encode())
 # close the connection
 s.close()	
 	
