@@ -9,6 +9,8 @@ SERVO_PIN = "P9_14"
 #starting position
 PWM.start(DRIVE_PIN,7.5,50)
 PWM.start(SERVO_PIN,3,50)
+starting = (0.055*(float(90)) + 3)
+PWM.set_duty_cycle(SERVO_PIN,starting)
 #____________________________
 
 def drive(num):
@@ -17,7 +19,6 @@ def drive(num):
 
 
 def calibrate():
-#def calibrate(inp):
     PWM.set_duty_cycle(DRIVE_PIN, 0.0)
     print("Make sure battery is connected but switch is OFF.  Press ENTER to continue")
     #inp = input()
@@ -42,7 +43,7 @@ def calibrate():
     print("I have finished running\n")
 
 def main():
-
+   
 # next create a socket object
     s = socket.socket()
     print ("Socket successfully created")
@@ -72,11 +73,12 @@ def main():
 
 # send a thank you message to the client. encoding to send byte type.
         c.send('Thank you for connecting'.encode())
-
-        #calibrate()
+        print("calibrate 5")
+        time.sleep(5)
+        calibrate()
         #calibrate('')
         direction = 'i'
-        servo_pos = 3
+        servo_pos = 90
         drive_pos = 7.5
 
         while(direction != 'q'):
@@ -85,14 +87,18 @@ def main():
             #drive(num)
             if(direction == 'a'): #left
                 print("i am turning left")
-                servo_pos += 0.05
+                servo_pos += 20
                 servo_cycle = (0.055*(float(servo_pos)) + 3)
+                print("the servo pos and cycle "+ servo_pos + " " + servo_cycle)
                 PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
-            elif(direction == 'd'): #right
-                print("I am truning right")
-                servo_pos -= 0.05
+                #print("the servo pos and cycle "+ servo_pos + " " + servo_cycle)
+            elif(direction == 'c'): #right
+                print("I am turning right")
+                servo_pos -= 20
                 servo_cycle = (0.055*(float(servo_pos)) + 3)
+                print("the servo pos and cycle "+ servo_pos + " " + servo_cycle)
                 PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
+                #print("the servo pos and cycle "+ servo_pos + " " + servo_cycle)
             elif(direction == 'w'): #forward
                 print("I am going forward")
                 drive_pos += 0.05
