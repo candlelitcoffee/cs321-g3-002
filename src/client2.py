@@ -7,11 +7,10 @@ import socket
 s = socket.socket()		
 
 # Define the port on which you want to connect
-port = 55554
-			
+port = 55334			
 
 # connect to the server on local computer
-s.connect(('192.168.7.2', port))
+s.connect(('192.168.59.44', port))
 
 # receive data from the server and decoding to get the string.
 print (s.recv(1024).decode())
@@ -23,11 +22,11 @@ while 1:
             #turn right
             if(event.state > 0):
                 print("R")
-                s.send('c'.encode())        
+                s.send('r'.encode())        
             #turn  left
             if(event.state < 0):
                 print("L")
-                s.send('a'.encode())
+                s.send('l'.encode())
         if('BTN_SOUTH' in event.code and event.state==1):
             print("W")
             s.send('w'.encode())
@@ -37,5 +36,3 @@ while 1:
             s.send('s'.encode())
 # close the connection
 s.close()	
-	
-
