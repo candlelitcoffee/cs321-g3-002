@@ -1,4 +1,3 @@
-
 # first of all import the socket library
 import socket
 import time
@@ -11,6 +10,8 @@ PWM.start(DRIVE_PIN,7.5,50)
 PWM.start(SERVO_PIN,3,50)
 starting = (0.055*(float(90)) + 3)
 PWM.set_duty_cycle(SERVO_PIN,starting)
+
+
 #____________________________
 
 def drive(num):
@@ -49,7 +50,7 @@ def main():
     print ("Socket successfully created")
 
 # reserve a port on your computer 
-    port = 55554
+    port = 55334
 
 # Next bind to the port
 # we have not typed any ip in the ip field
@@ -80,25 +81,26 @@ def main():
         direction = 'i'
         servo_pos = 90
         drive_pos = 7.5
-
+        servo_cycle = 0.0
         while(direction != 'q'):
             direction = c.recv(1024).decode()
             print("the buf is "+direction)
             #drive(num)
-            if(direction == 'a'): #left
-                print("i am turning left")
-                servo_pos += 20
-                servo_cycle = (0.055*(float(servo_pos)) + 3)
-                print("the servo pos and cycle "+ servo_pos + " " + servo_cycle)
-                PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
-                #print("the servo pos and cycle "+ servo_pos + " " + servo_cycle)
-            elif(direction == 'c'): #right
-                print("I am turning right")
-                servo_pos -= 20
-                servo_cycle = (0.055*(float(servo_pos)) + 3)
-                print("the servo pos and cycle "+ servo_pos + " " + servo_cycle)
-                PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
-                #print("the servo pos and cycle "+ servo_pos + " " + servo_cycle)
+            
+            if(direction == 'l'): #left
+                if(servo_pos < 179):
+                    print("i am turning left")
+                    servo_pos += 1
+                    servo_cycle = (0.055*(float(servo_pos)) + 3)
+                    PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
+                    print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
+            elif(direction == 'r'): #right
+                if(servo_pos > 2):
+                    print("I am turning right")
+                    servo_pos -= 1
+                    servo_cycle = (0.055*(float(servo_pos)) + 3)
+                    PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
+                    print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
             elif(direction == 'w'): #forward
                 print("I am going forward")
                 drive_pos += 0.05
