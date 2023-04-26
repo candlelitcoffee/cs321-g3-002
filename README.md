@@ -51,6 +51,4 @@ This is the repository that hosts the racecar code for CS 321.
 		
 		>sudo apt-get install libavcodec-dev libavformat-dev libdc1394-22-dev libswscale-dev libtheora-dev libxvidcore-dev libx264-dev libvorbis-dev yasm libopencore-amrnb-dev libopencore-amrwb-dev libv4l-dev libxine2-dev libtbb-dev
 		
-- image.py and video.py need testing
-
-- Gotta try out MediaMtx with OpenCV for connecting to frontend (and potentially faster frame rate.. idk I gotta try it out tbh)
+- ffmpeg, ffplay, & MediaMTX
