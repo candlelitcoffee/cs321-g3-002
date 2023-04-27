@@ -42,11 +42,11 @@ while 1:
                 #turn straight
                 print("Steering center")
                 s.send('c'.encode())
-        if('BTN_TR' in event.code and event.state==1):
+        if('ABS_RZ' in event.code and event.state==1):
             print("W")
             s.send('w'.encode())
                 
-        if('BTN_TL' in event.code and event.state==1):
+        if('ABS_Z' in event.code and event.state==1):
             print("S")
             s.send('s'.encode())
 # close the connection

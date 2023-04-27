@@ -106,12 +106,12 @@ def main():
                 PWM.set_duty_cycle(SERVO_PIN,starting)
             elif(direction == 'w'): #forward
                 print("I am going forward")
-                drive_pos += 0.05
+                drive_pos += 0.1
                 if 10.0 >= drive_pos >= 5.0:
                     PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
             elif(direction == 's'): #backward
                 print("I am going backward")
-                drive_pos -= 0.05
+                drive_pos -= 0.1
                 if 10.0 >= drive_pos >= 5.0:
                     PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
 
