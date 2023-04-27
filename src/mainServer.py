@@ -90,32 +90,53 @@ def main():
             if(direction == 'l'): #left
                 if(servo_pos < 180):
                     print("i am turning left")
-                    servo_pos += 5
-                    servo_cycle = (0.055*(float(servo_pos)) + 2)
+                    servo_pos += 35
+                    servo_cycle = (0.055*(float(servo_pos)) + 3)
                     PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
                     print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
             elif(direction == 'r'): #right
                 if(servo_pos > 0):
                     print("I am turning right")
-                    servo_pos -= 5
-                    servo_cycle = (0.055*(float(servo_pos)) + 2)
+                    servo_pos -= 35
+                    servo_cycle = (0.055*(float(servo_pos)) + 3)
                     PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
                     print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
-            elif(direction == 'c'): #center the wheels
-                starting = (0.055*(float(90)) + 3)
-                PWM.set_duty_cycle(SERVO_PIN,starting)
-            elif(direction == 'w'): #forward
-                print("I am going forward")
-                drive_pos += 0.01
-                if 8.0 >= drive_pos >= 5.0:
-                    PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
-                    print("motor forward duty cycle: " + str(drive_pos))
             elif(direction == 's'): #backward
                 print("I am going backward")
-                drive_pos -= 0.01
-                if 10.0 >= drive_pos >= 6.0:
+                if 7.7 >= drive_pos >= 5.0:
+                    drive_pos += 0.05
                     PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
                     print("motor forward duty cycle: " + str(drive_pos))
+            elif(direction == 'w'): #forward
+                print("I am going forward")
+                if 10.0 >= drive_pos >= 6.0:
+                    drive_pos -= 0.05
+                    PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+                    print("motor backward duty cycle: " + str(drive_pos))
+            elif(direction == 'b'): #halt car gradually
+                if drive_pos != 7.5:
+                    if drive_pos > 7.5:
+                        while drive_pos > 7.5:
+                            drive_pos -= 0.1
+                            PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+                            print("motor halting duty cycle: " + str(drive_pos))
+                            time.sleep(0.1)
+                        drive_pos = 7.5
+                        PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+                    elif drive_pos < 7.5:
+                        while drive_pos < 7.5:
+                            drive_pos += 0.1
+                            PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+                            print("motor halting duty cycle: " + str(drive_pos))
+                            time.sleep(0.1)
+                        drive_pos = 7.5
+                        PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+            elif(direction == 'c'): #center wheels
+                starting = (0.055*(float(90)) + 3)
+                PWM.set_duty_cycle(SERVO_PIN,starting)
+            elif(direction == 'x'): #Sudden brake
+                drive_pos = 7.5
+                PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
 
         c.close()
         break
