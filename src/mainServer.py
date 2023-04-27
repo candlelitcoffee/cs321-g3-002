@@ -22,26 +22,27 @@ def drive(num):
 def calibrate():
     PWM.set_duty_cycle(DRIVE_PIN, 0.0)
     print("Make sure battery is connected but switch is OFF.  Press ENTER to continue")
-    #inp = input()
-    #if inp == '':
-    PWM.set_duty_cycle(DRIVE_PIN, 10.0)
-    print("Turn the switch ON now. You will hear two beeps then press Enter")
-    #    inp = input()
-    #    if inp == '':            
-    PWM.set_duty_cycle(DRIVE_PIN, 5.0)
-    print ("Working...")
-    time.sleep(7)
-    print ("Wait for it ....")
-    time.sleep (5)
-    print ("Almost there.....")
-    PWM.set_duty_cycle(DRIVE_PIN, 0.0)
-    time.sleep(2)
-    print ("Arming ESC now...")
-    PWM.set_duty_cycle(DRIVE_PIN, 5.0)
-    time.sleep(1)
-    print ("ESC is armed (You should have heard another beep).  You can now drive the car")
-    PWM.set_duty_cycle(DRIVE_PIN, 7.5)
-    print("I have finished running\n")
+    inp = input()
+    if inp == '':
+        PWM.set_duty_cycle(DRIVE_PIN, 10.0)
+        print("Turn the switch ON now. You will hear two beeps then press Enter")
+        
+        inp = input()
+        if inp == '':            
+            PWM.set_duty_cycle(DRIVE_PIN, 5.0)
+            print ("Working...")
+            time.sleep(7)
+            print ("Wait for it ....")
+            time.sleep (5)
+            print ("Almost there.....")
+            PWM.set_duty_cycle(DRIVE_PIN, 0.0)  
+            time.sleep(2)
+            print ("Arming ESC now...")
+            PWM.set_duty_cycle(DRIVE_PIN, 5.0)
+            time.sleep(1)
+            print ("ESC is armed (You should have heard another beep).  You can now drive the car")
+            PWM.set_duty_cycle(DRIVE_PIN, 7.5)
+            print("I have finished running\n")
 
 def main():
    
@@ -75,7 +76,7 @@ def main():
 # send a thank you message to the client. encoding to send byte type.
         c.send('Thank you for connecting'.encode())
         print("calibrate 5")
-        time.sleep(5)
+        #time.sleep(5)
         calibrate()
         #calibrate('')
         direction = 'i'
@@ -88,16 +89,16 @@ def main():
             #drive(num)
             
             if(direction == 'l'): #left
-                if(servo_pos < 179):
+                if(servo_pos < 170):
                     print("i am turning left")
-                    servo_pos += 1
+                    servo_pos += 5
                     servo_cycle = (0.055*(float(servo_pos)) + 3)
                     PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
                     print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
             elif(direction == 'r'): #right
-                if(servo_pos > 2):
+                if(servo_pos > 7):
                     print("I am turning right")
-                    servo_pos -= 1
+                    servo_pos -= 5
                     servo_cycle = (0.055*(float(servo_pos)) + 3)
                     PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
                     print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
