@@ -19,35 +19,45 @@ data=''
 x_axis = 0
 deadzone = 0.2
 maxval = 32768
-prevAxis = 0
+prevAxisL = 0
+prevAxisR = 0
 
 while 1:
     events = get_gamepad()
     for event in events:
         if('ABS_X' in event.code):  
-            print("event.state: " + str(event.state))
+            print("event.state LJS: " + str(event.state))
             if abs(event.state) > deadzone * maxval:      
                 #turn right 
-                if(event.state > prevAxis):
+                if(event.state > prevAxisL):
                     print("R")
                     s.send('r'.encode())        
                 #turn  left
-                elif(event.state < prevAxis):
+                elif(event.state < prevAxisL):
                     print("L")
                     s.send('l'.encode())
-
                 #storing previous axis number 
-                axisNum = event.state
-            elif (event.state < (deadzone * maxval)) and (event.state > -(deadzone * maxval)):
-                #turn straight
-                print("Steering center")
-                s.send('c'.encode())
-        if('ABS_RZ' in event.code and event.state==1):
-            print("W")
-            s.send('w'.encode())
-                
-        if('ABS_Z' in event.code and event.state==1):
-            print("S")
-            s.send('s'.encode())
+                prevAxisL = event.state
+        if('ABS_RY' in event.code):
+            print("event.state: RJS" + str(event.state))
+            if abs(event.state) > deadzone * maxval:      
+                #turn right 
+                if(event.state > prevAxisR):
+                    print("W")
+                    s.send('w'.encode())        
+                #turn  left
+                elif(event.state < prevAxisR):
+                    print("S")
+                    s.send('s'.encode())
+                #storing previous axis number 
+                prevAxisR = event.state
 # close the connection
 s.close()	
+
+
+'''elif('BTN_TR' in event.code and event.state==1):
+            print("W")
+            s.send('w'.encode())        
+        elif('BTN_TL' in event.code and event.state==1):
+            print("S")
+            s.send('s'.encode())'''
