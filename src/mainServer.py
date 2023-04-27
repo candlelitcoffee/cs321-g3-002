@@ -26,7 +26,6 @@ def calibrate():
     if inp == '':
         PWM.set_duty_cycle(DRIVE_PIN, 10.0)
         print("Turn the switch ON now. You will hear two beeps then press Enter")
-        
         inp = input()
         if inp == '':            
             PWM.set_duty_cycle(DRIVE_PIN, 5.0)
@@ -35,7 +34,7 @@ def calibrate():
             print ("Wait for it ....")
             time.sleep (5)
             print ("Almost there.....")
-            PWM.set_duty_cycle(DRIVE_PIN, 0.0)  
+            PWM.set_duty_cycle(DRIVE_PIN, 0.0)
             time.sleep(2)
             print ("Arming ESC now...")
             PWM.set_duty_cycle(DRIVE_PIN, 5.0)
@@ -77,7 +76,7 @@ def main():
         c.send('Thank you for connecting'.encode())
         print("calibrate 5")
         #time.sleep(5)
-        calibrate()
+        #calibrate()
         #calibrate('')
         direction = 'i'
         servo_pos = 90
@@ -89,19 +88,22 @@ def main():
             #drive(num)
             
             if(direction == 'l'): #left
-                if(servo_pos < 170):
+                if(servo_pos < 180):
                     print("i am turning left")
-                    servo_pos += 5
-                    servo_cycle = (0.055*(float(servo_pos)) + 3)
+                    servo_pos += 2
+                    servo_cycle = (0.055*(float(servo_pos)) + 2)
                     PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
                     print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
             elif(direction == 'r'): #right
-                if(servo_pos > 7):
+                if(servo_pos > 0):
                     print("I am turning right")
-                    servo_pos -= 5
-                    servo_cycle = (0.055*(float(servo_pos)) + 3)
+                    servo_pos -= 2
+                    servo_cycle = (0.055*(float(servo_pos)) + 2)
                     PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
                     print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
+            elif(direction == 'c'): #center the wheels
+                starting = (0.055*(float(90)) + 3)
+                PWM.set_duty_cycle(SERVO_PIN,starting)
             elif(direction == 'w'): #forward
                 print("I am going forward")
                 drive_pos += 0.05
