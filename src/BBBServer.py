@@ -2,8 +2,15 @@
 import socket
 import time
 import Adafruit_BBIO.PWM as PWM
+import subprocess
+
 DRIVE_PIN = "P9_16"
 SERVO_PIN = "P9_14"
+
+#ffmpeg video stream flags
+ffmpegCmd = ["ffmpeg", "-c:v", "mjpeg", "-s", "640x360", "-i", "/dev/video0",
+             "-nostdin", "-loglevel", "panic", "-c:v", "copy", "-tune", "zerolatency",
+             "-muxdelay", "0.1", "-g", "0", "-f", "mjpeg", "INDEX 20: LINK GOES HERE"]
 
 #starting position
 PWM.start(DRIVE_PIN,7.5,50)
@@ -45,34 +52,41 @@ def calibrate():
 
 def main():
    
-# next create a socket object
+    global ffmpegCmd
+    udp_link = ""
+
+    #ffmpegCmd[20] = udp_link  # Put UDP link into ffmpegCmd list.
+    #p = subprocess.Popen(ffmpegCmd)  # Run ffmpeg as a background task, no logs. Will not block.
+    #print(f"Ffmpeg command ran, streaming to {ffmpegCmd[20]}")
+
+    # next create a socket object
     s = socket.socket()
     print ("Socket successfully created")
 
-# reserve a port on your computer 
+    # reserve a port on your computer 
     port = 55334
 
-# Next bind to the port
-# we have not typed any ip in the ip field
-# instead we have inputted an empty string
-# this makes the server listen to requests
-# coming from other computers on the network
+    # Next bind to the port
+    # we have not typed any ip in the ip field
+    # instead we have inputted an empty string
+    # this makes the server listen to requests
+    # coming from other computers on the network
     s.bind(('', port))
     print ("socket binded to %s" %(port))
 
-# put the socket into listening mode
+    # put the socket into listening mode
     s.listen(5)
     print ("socket is listening")
 
-# a forever loop until we interrupt it or
-# an error occurs
+    # a forever loop until we interrupt it or
+    # an error occurs
     while True:
 
-# Establish connection with client.
+        # Establish connection with client.
         c, addr = s.accept()
         print ('Got connection from', addr )
 
-# send a thank you message to the client. encoding to send byte type.
+        # send a thank you message to the client. encoding to send byte type.
         c.send('Thank you for connecting'.encode())
         print("calibrate 5")
         #time.sleep(5)
