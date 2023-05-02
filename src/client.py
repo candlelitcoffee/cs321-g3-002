@@ -8,19 +8,27 @@ import racer
 
 def main():
 
-    #RM connections, DO NOT CHANGE ANYTHING
+    laptopID = "Jerry"
+    BeagleBone_IP = "None"
 
+    # Define the port on which you want to connect
+    port = 55334
+
+    #RM connections, DO NOT CHANGE ANYTHING
     RMName = "G17"
     RaceManagement = racer.RaceConnection(RMName)  # Establish connection to Race Management
     RaceManagement.start()  # Will prompt for name, number, and send an integer indicating what stream to record to.
 
-    
+    #Connecting to RM 
+    fromBB = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
+    fromBB.bind((socket.gethostbyname(laptopID), port))
+
+
+
+
     # Create a socket object
     s = socket.socket()		
-
-    # Define the port on which you want to connect
-    port = 55334			
-
+			
     # connect to the server on local computer
     s.connect(('192.168.170.44', port))
 

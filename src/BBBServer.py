@@ -21,6 +21,20 @@ PWM.set_duty_cycle(SERVO_PIN,starting)
 
 #____________________________
 
+def get_ip(): 
+    # From StackOverflow - https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        s.connect(('8.8.8.8', 80))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
+
 def drive(num):
     if 10.0 >= num >= 5.0:
         PWM.set_duty_cycle(DRIVE_PIN, num)
@@ -53,7 +67,19 @@ def calibrate():
 def main():
    
     global ffmpegCmd
+    IP = get_ip()
+    port = 55334
     udp_link = ""
+
+    print("Your BeagleBone's IP is: " + IP + "\n")
+
+    laptopID = "Jerry"
+    laptopIP = socket.gethostbyname(laptopID)
+    print("This is laptop's IP: " + laptopIP)
+    BeagleBone_IP = f"!{IP}".encode()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.bind((IP, port))  # Receive the UDP link from server.
+    sock.sendto(BeagleBone_IP, (laptopIP, port))  # Send BB IP to server.
 
     #ffmpegCmd[20] = udp_link  # Put UDP link into ffmpegCmd list.
     #p = subprocess.Popen(ffmpegCmd)  # Run ffmpeg as a background task, no logs. Will not block.
@@ -154,4 +180,7 @@ def main():
 
         c.close()
         break
-main()
+
+
+if __name__ == "__main__":
+    main()
