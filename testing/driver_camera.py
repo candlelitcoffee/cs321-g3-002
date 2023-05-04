@@ -12,8 +12,9 @@ port = 55334
 s.connect(('172.20.10.7', port))
 
 # receive data from the server and decoding to get the string.
+# data was printing errors so just initialized it
 print (s.recv(1024).decode())
-data=''
+data='s.recv(1024)'
 
 # Initialize Pygame
 pygame.init()
