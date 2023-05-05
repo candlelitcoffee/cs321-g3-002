@@ -81,9 +81,9 @@ def main():
     sock.bind((IP, port))  # Receive the UDP link from server.
     sock.sendto(BeagleBone_IP, (laptopIP, port))  # Send BB IP to server.
 
-    #ffmpegCmd[20] = udp_link  # Put UDP link into ffmpegCmd list.
-    #p = subprocess.Popen(ffmpegCmd)  # Run ffmpeg as a background task, no logs. Will not block.
-    #print(f"Ffmpeg command ran, streaming to {ffmpegCmd[20]}")
+    ffmpegCmd[20] = udp_link  # Put UDP link into ffmpegCmd list.
+    p = subprocess.Popen(ffmpegCmd)  # Run ffmpeg as a background task, no logs. Will not block.
+    print(f"Ffmpeg command ran, streaming to {ffmpegCmd[20]}")
 
     # next create a socket object
     s = socket.socket()
