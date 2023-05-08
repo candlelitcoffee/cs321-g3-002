@@ -81,28 +81,31 @@ def main():
     sock.bind((IP, port))  # Receive the UDP link from server.
     sock.sendto(BeagleBone_IP, (laptopIP, port))  # Send BB IP to server.
 
+
+    #getting udp link
+    udp_link = ""
+    while True:  # Program will block here until we send a link to stream to. Use reconnect in mainL, press start.
+        message = sock.recv(32)
+        decoded = message.decode()
+        if decoded.startswith("L"):  # This happens when we send controller data when reconnecting, just ignore it.
+            continue
+        if decoded.startswith("u"):  # This means we received a UDP link to stream to.
+            udp_link = decoded
+            sock.sendto(b"Received", (laptopIP, port))  # Confirm to ControlTower that we received a video link.
+            break
+        elif decoded.startswith("N"):
+            sock.sendto(b"Received", (laptopIP, port))
+            udp_link = "No video link supplied. Will not be streaming."
+            break
+
+
     ffmpegCmd[20] = udp_link  # Put UDP link into ffmpegCmd list.
     p = subprocess.Popen(ffmpegCmd)  # Run ffmpeg as a background task, no logs. Will not block.
     print(f"Ffmpeg command ran, streaming to {ffmpegCmd[20]}")
 
-    # next create a socket object
-    s = socket.socket()
-    print ("Socket successfully created")
 
-    # reserve a port on your computer 
-    port = 55334
 
-    # Next bind to the port
-    # we have not typed any ip in the ip field
-    # instead we have inputted an empty string
-    # this makes the server listen to requests
-    # coming from other computers on the network
-    s.bind(('', port))
-    print ("socket binded to %s" %(port))
 
-    # put the socket into listening mode
-    s.listen(5)
-    print ("socket is listening")
 
     # a forever loop until we interrupt it or
     # an error occurs
@@ -184,3 +187,26 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+'''    # next create a socket object
+    s = socket.socket()
+    print ("Socket successfully created")
+
+    # reserve a port on your computer 
+    port = 55334
+
+    # Next bind to the port
+    # we have not typed any ip in the ip field
+    # instead we have inputted an empty string
+    # this makes the server listen to requests
+    # coming from other computers on the network
+    s.bind(('', port))
+    print ("socket binded to %s" %(port))
+
+    # put the socket into listening mode
+    s.listen(5)
+    print ("socket is listening")
+    '''
