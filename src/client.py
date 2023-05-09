@@ -7,7 +7,7 @@ from pygame.locals import *
 import racer
 
 
-laptopID = "Jerry"
+laptopID = "Zephyrus-G14"
 BeagleBone_IP = "None"
 video_feed_test = "None"
 
@@ -19,7 +19,7 @@ def main():
     port = 55334
 
     #RM connections, DO NOT CHANGE ANYTHING
-    RMName = "G17"
+    RMName = "localhost"
     RaceManagement = racer.RaceConnection(RMName)  # Establish connection to Race Management
     RaceManagement.start()  # Will prompt for name, number, and send an integer indicating what stream to record to.
 
@@ -27,18 +27,19 @@ def main():
     fromBB = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
     fromBB.bind((socket.gethostbyname(laptopID), port))
 
+    
     #Sending UDP video link to BBB.
     while True:
-            data = fromBB.recv(64)
-            decoded = data.decode()
-            if decoded.startswith("!"):
-                BB_IP = decoded[1:]  # Now BB_IP has been loaded with BeagleBone's IP.
-                print(f"Got BB IP: {BB_IP}")
-                bytes_udp = RaceManagement.sendFeed.encode()
-                fromBB.sendto(bytes_udp, (BB_IP, port))  # Send UDP video link to BeagleBone.
-            elif decoded.startswith("R"):
-                break  # UDP Address received by the BBB.
-
+        data = fromBB.recv(64)
+        decoded = data.decode()
+        if decoded.startswith("!"):
+            BeagleBone_IP = decoded[1:]  # Now BeagleBone_IP has been loaded with BeagleBone's IP.
+            print(f"Got BeagleBone_IP: {BeagleBone_IP}")
+            #bytes_udp = RaceManagement.sendFeed.encode()
+            #fromBB.sendto(bytes_udp, (BeagleBone_IP, port))  # Send UDP video link to BeagleBone.
+        #elif decoded.startswith("R"):
+            break  # UDP Address received by the BBB.
+    
     
     #Car controls loop
     toBB = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -75,7 +76,7 @@ def main():
                 
                 s = f"LS:{string_Stick}LT:{string_left_trigger}RT:{string_right_trigger}"  # Length 19
                 bytes_s = s.encode()
-                toBB.sendto(bytes_s, (BB_IP, port))
+                toBB.sendto(bytes_s, (BeagleBone_IP, port))
             if event.type == JOYBUTTONDOWN:
                 print("Button Number: " + str(event.button))
                 if event.button == 1: #Button B
@@ -83,19 +84,19 @@ def main():
                     print("B")
                     tempButton = "B" 
                     bytes_s = tempButton.encode()
-                    toBB.sendto(bytes_s, (BB_IP, port))
+                    toBB.sendto(bytes_s, (BeagleBone_IP, port))
                 if event.button == 3: #Button Y
                     #Center wheels
                     print("C")
                     tempButton = "C" 
                     bytes_s = tempButton.encode()
-                    toBB.sendto(bytes_s, (BB_IP, port))
+                    toBB.sendto(bytes_s, (BeagleBone_IP, port))
                 if event.button == 0: #Button A
                     #Sudden stop
                     print("brake")
                     tempButton = "X" 
                     bytes_s = tempButton.encode()
-                    toBB.sendto(bytes_s, (BB_IP, port))
+                    toBB.sendto(bytes_s, (BeagleBone_IP, port))
                     
     # close the connection
     #toBB.close()	

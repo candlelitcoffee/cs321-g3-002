@@ -73,7 +73,7 @@ def main():
 
     print("Your BeagleBone's IP is: " + IP + "\n")
 
-    laptopID = "Jerry"
+    laptopID = "Zephyrus-G14"
     laptopIP = socket.gethostbyname(laptopID)
     print("This is laptop's IP: " + laptopIP)
     BeagleBone_IP = f"!{IP}".encode()
@@ -81,7 +81,7 @@ def main():
     sock.bind((IP, port))  # Receive the UDP link from server.
     sock.sendto(BeagleBone_IP, (laptopIP, port))  # Send BB IP to server.
 
-
+    '''
     #getting udp link
     udp_link = ""
     while True:  # Program will block here until we send a link to stream to. Use reconnect in mainL, press start.
@@ -98,11 +98,11 @@ def main():
             udp_link = "No video link supplied. Will not be streaming."
             break
 
-
-    ffmpegCmd[20] = udp_link  # Put UDP link into ffmpegCmd list.
-    p = subprocess.Popen(ffmpegCmd)  # Run ffmpeg as a background task, no logs. Will not block.
-    print(f"Ffmpeg command ran, streaming to {ffmpegCmd[20]}")
-
+    if not udp_link.startswith("N"):  # This means that we have an actual UDP link to stream to. Run ffmpeg command.
+        ffmpegCmd[20] = udp_link  # Put UDP link into ffmpegCmd list.
+        p = subprocess.Popen(ffmpegCmd)  # Run ffmpeg as a background task, no logs. Will not block.
+        print(f"Ffmpeg command ran, streaming to {ffmpegCmd[20]}")
+    '''
 
 
     #direction = 'i'
