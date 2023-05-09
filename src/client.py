@@ -64,12 +64,12 @@ def main():
                     string_Stick = "{:04d}".format(joy_stick)
                 if event.axis == 4:
                     print("Left Trigger: " + str(joystick.get_axis(4)))
-                    left_trigger = joystick.get_axis(4) + 1
+                    left_trigger = joystick.get_axis(4) + 1    # setting values to 0-2, once joystick values reach 0 increase motor speed by only 0.2
                     string_left_trigger = "{:03d}".format(left_trigger)
                     RaceManagement.send_throttle(left_trigger * -1) 
                 if event.axis == 5:
                     print("Right Trigger: " + str(joystick.get_axis(5)))
-                    right_trigger = joystick.get_axis(5) + 1
+                    right_trigger = joystick.get_axis(5) + 1    # setting values to 0-2, once joystick values reach 0 increase motor speed by only 0.2
                     string_right_trigger = "{:03d}".format(right_trigger)
                     RaceManagement.send_throttle(right_trigger) 
                 

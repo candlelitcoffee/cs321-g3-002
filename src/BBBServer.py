@@ -105,28 +105,117 @@ def main():
 
 
 
-
+    #direction = 'i'
+    servo_pos = 90
+    drive_pos = 7.5
+    servo_cycle = 0.0
 
     # a forever loop until we interrupt it or
     # an error occurs
     while True:
 
-        # Establish connection with client.
+        message = sock.recv(19)
+        decode = message.decode()
+
+        print("Decoded message: " + decode)
+
+        #if message contains buttons
+        if decode.len() <= 2:
+            if decode is "B":
+                if drive_pos != 7.5:
+                    if drive_pos > 7.5:
+                        while drive_pos > 7.5:
+                            drive_pos -= 0.1
+                            PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+                            print("motor halting duty cycle: " + str(drive_pos))
+                            time.sleep(0.1)
+                        drive_pos = 7.5
+                        PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+                    elif drive_pos < 7.5:
+                        while drive_pos < 7.5:
+                            drive_pos += 0.1
+                            PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+                            print("motor halting duty cycle: " + str(drive_pos))
+                            time.sleep(0.1)
+                        drive_pos = 7.5
+                        PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+            elif decode is "C":
+                starting = (0.055*(float(90)) + 3)
+                PWM.set_duty_cycle(SERVO_PIN,starting)
+            elif decode is "X":
+                drive_pos = 7.5
+                PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+        else:    
+            servo_pos = int(decode[3:7])
+            lt = int(decode[10:13]) # 7.5 to 5 for accelerate
+            rt = int(decode[16:20]) # 7.5 to 8.5 for reverse
+
+        #Servo changes
+        servo_cycle = (0.055*(float(servo_pos)) + 3)
+        PWM.set_duty_cycle(SERVO_PIN, servo_cycle)
+        print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
+
+        
+        if lt != 0.0 and rt == 0.0:  # Reversing only allowed if right trigger is off and left trigger is not off.
+            print("I am going backward")
+            if 7.7 > drive_pos:     #might wanna include 7.7 too here
+                drive_pos += lt
+                PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+                print("motor forward duty cycle: " + str(drive_pos))
+        else:
+            print("I am going forward")
+            if 5.0 < drive_pos:     #might wanna include 5.0 too here
+                drive_pos -= rt
+                PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
+                print("motor backward duty cycle: " + str(drive_pos))
+
+
+        #time.sleep(5)
+        #calibrate()
+        #calibrate('')
+        
+        #c.close()
+        break
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+'''    # next create a socket object
+    s = socket.socket()
+    print ("Socket successfully created")
+
+    # reserve a port on your computer 
+    port = 55334
+
+    # Next bind to the port
+    # we have not typed any ip in the ip field
+    # instead we have inputted an empty string
+    # this makes the server listen to requests
+    # coming from other computers on the network
+    s.bind(('', port))
+    print ("socket binded to %s" %(port))
+
+    # put the socket into listening mode
+    s.listen(5)
+    print ("socket is listening")
+    '''
+
+
+'''# Establish connection with client.
         c, addr = s.accept()
         print ('Got connection from', addr )
 
         # send a thank you message to the client. encoding to send byte type.
         c.send('Thank you for connecting'.encode())
         print("calibrate 5")
-        #time.sleep(5)
-        #calibrate()
-        #calibrate('')
-        direction = 'i'
-        servo_pos = 90
-        drive_pos = 7.5
-        servo_cycle = 0.0
-        while(direction != 'q'):
-            direction = c.recv(1024).decode()
+        '''
+
+
+'''direction = c.recv(1024).decode()
             print("the buf is "+direction)
             #drive(num)
             
@@ -156,6 +245,11 @@ def main():
                     drive_pos -= 0.05
                     PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
                     print("motor backward duty cycle: " + str(drive_pos))
+                    '''
+
+
+'''while(direction != 'q'):
+            
             elif(direction == 'b'): #halt car gradually
                 if drive_pos != 7.5:
                     if drive_pos > 7.5:
@@ -180,33 +274,4 @@ def main():
             elif(direction == 'x'): #Sudden brake
                 drive_pos = 7.5
                 PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
-
-        c.close()
-        break
-
-
-if __name__ == "__main__":
-    main()
-
-
-
-
-'''    # next create a socket object
-    s = socket.socket()
-    print ("Socket successfully created")
-
-    # reserve a port on your computer 
-    port = 55334
-
-    # Next bind to the port
-    # we have not typed any ip in the ip field
-    # instead we have inputted an empty string
-    # this makes the server listen to requests
-    # coming from other computers on the network
-    s.bind(('', port))
-    print ("socket binded to %s" %(port))
-
-    # put the socket into listening mode
-    s.listen(5)
-    print ("socket is listening")
-    '''
+                '''
