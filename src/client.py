@@ -1,6 +1,6 @@
 # Import socket module
 from __future__ import print_function
-from inputs import get_gamepad	
+#from inputs import get_gamepad	
 import socket		
 import pygame
 from pygame.locals import *
@@ -19,31 +19,33 @@ def main():
     port = 55334
 
     #RM connections, DO NOT CHANGE ANYTHING
-    RMName = "localhost"
+    RMName = "localhost" #Should be G17
     RaceManagement = racer.RaceConnection(RMName)  # Establish connection to Race Management
     RaceManagement.start()  # Will prompt for name, number, and send an integer indicating what stream to record to.
 
-    #Connecting to RM 
+    #Connecting to BBB
     fromBB = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
     fromBB.bind((socket.gethostbyname(laptopID), port))
+    toBB = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    
+    print("outside of while")
     #Sending UDP video link to BBB.
     while True:
-        data = fromBB.recv(64)
+        print("inside of while")
+        data = fromBB.recv(30)
         decoded = data.decode()
+        print("message: " + decoded)
         if decoded.startswith("!"):
             BeagleBone_IP = decoded[1:]  # Now BeagleBone_IP has been loaded with BeagleBone's IP.
             print(f"Got BeagleBone_IP: {BeagleBone_IP}")
-            #bytes_udp = RaceManagement.sendFeed.encode()
-            #fromBB.sendto(bytes_udp, (BeagleBone_IP, port))  # Send UDP video link to BeagleBone.
-        #elif decoded.startswith("R"):
+            bytes_udp = RaceManagement.sendFeed.encode()
+            fromBB.sendto(bytes_udp, (BeagleBone_IP, port))  # Send UDP video link to BeagleBone.
+        elif decoded.startswith("R"):
             break  # UDP Address received by the BBB.
     
     
     #Car controls loop
-    toBB = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+    
     pygame.init()
     joystick = pygame.joystick.Joystick(0)  
     joystick.init()
@@ -58,25 +60,30 @@ def main():
     while True: 
         for event in pygame.event.get():
             if event.type == JOYAXISMOTION:
-                if event.axis == 0:
+                if event.axis == 0 or event.axis == 4 or event.axis == 5:
                     print("Joystick: " + str(joystick.get_axis(0)))
                     #print("current prevAxis: " + str(prevAxis))
-                    joy_stick = joystick.get_axis(0) * 100
-                    string_Stick = "{:04d}".format(joy_stick)
-                if event.axis == 4:
+                    joy_stick = joystick.get_axis(0) * 10 + 105
+                    rounded_stick = round(joy_stick, 4)
+                    string_Stick = "{:04f}".format(rounded_stick)
+                    print("string_Stick: " + string_Stick)
+
                     print("Left Trigger: " + str(joystick.get_axis(4)))
                     left_trigger = joystick.get_axis(4) + 1    # setting values to 0-2, once joystick values reach 0 increase motor speed by only 0.2
-                    string_left_trigger = "{:03d}".format(left_trigger)
-                    RaceManagement.send_throttle(left_trigger * -1) 
-                if event.axis == 5:
+                    string_left_trigger = "{:03f}".format(left_trigger)
+                    print("string_left_trigger: " + string_left_trigger)
+                    RaceManagement.send_throttle(round(left_trigger * -50)) 
+                
                     print("Right Trigger: " + str(joystick.get_axis(5)))
                     right_trigger = joystick.get_axis(5) + 1    # setting values to 0-2, once joystick values reach 0 increase motor speed by only 0.2
-                    string_right_trigger = "{:03d}".format(right_trigger)
-                    RaceManagement.send_throttle(right_trigger) 
-                
-                s = f"LS:{string_Stick}LT:{string_left_trigger}RT:{string_right_trigger}"  # Length 19
-                bytes_s = s.encode()
-                toBB.sendto(bytes_s, (BeagleBone_IP, port))
+                    string_right_trigger = "{:03f}".format(right_trigger)
+                    print("string_right_trigger: " + string_right_trigger)
+                    RaceManagement.send_throttle(round(right_trigger * 50)) 
+
+                    s = f"S{string_Stick}L{string_left_trigger}R{string_right_trigger}"  
+                    bytes_s = s.encode()
+                    toBB.sendto(bytes_s, (BeagleBone_IP, port))
+
             if event.type == JOYBUTTONDOWN:
                 print("Button Number: " + str(event.button))
                 if event.button == 1: #Button B
@@ -85,6 +92,7 @@ def main():
                     tempButton = "B" 
                     bytes_s = tempButton.encode()
                     toBB.sendto(bytes_s, (BeagleBone_IP, port))
+                    RaceManagement.send_throttle(0) 
                 if event.button == 3: #Button Y
                     #Center wheels
                     print("C")
@@ -97,6 +105,7 @@ def main():
                     tempButton = "X" 
                     bytes_s = tempButton.encode()
                     toBB.sendto(bytes_s, (BeagleBone_IP, port))
+                    RaceManagement.send_throttle(0) 
                     
     # close the connection
     #toBB.close()	

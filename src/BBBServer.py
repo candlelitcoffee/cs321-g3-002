@@ -77,15 +77,16 @@ def main():
     laptopIP = socket.gethostbyname(laptopID)
     print("This is laptop's IP: " + laptopIP)
     BeagleBone_IP = f"!{IP}".encode()
+    print("BB_IP after formatting: " + str(BeagleBone_IP))
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((IP, port))  # Receive the UDP link from server.
     sock.sendto(BeagleBone_IP, (laptopIP, port))  # Send BB IP to server.
 
-    '''
+    
     #getting udp link
     udp_link = ""
     while True:  # Program will block here until we send a link to stream to. Use reconnect in mainL, press start.
-        message = sock.recv(32)
+        message = sock.recv(30)
         decoded = message.decode()
         if decoded.startswith("L"):  # This happens when we send controller data when reconnecting, just ignore it.
             continue
@@ -102,11 +103,11 @@ def main():
         ffmpegCmd[20] = udp_link  # Put UDP link into ffmpegCmd list.
         p = subprocess.Popen(ffmpegCmd)  # Run ffmpeg as a background task, no logs. Will not block.
         print(f"Ffmpeg command ran, streaming to {ffmpegCmd[20]}")
-    '''
+    
 
 
     #direction = 'i'
-    servo_pos = 90
+    servo_pos = 90.0
     drive_pos = 7.5
     servo_cycle = 0.0
 
@@ -114,13 +115,13 @@ def main():
     # an error occurs
     while True:
 
-        message = sock.recv(19)
+        message = sock.recv(30)
         decode = message.decode()
 
         print("Decoded message: " + decode)
 
         #if message contains buttons
-        if decode.len() <= 2:
+        if len(decode) <= 2:
             if decode is "B":
                 if drive_pos != 7.5:
                     if drive_pos > 7.5:
@@ -146,9 +147,9 @@ def main():
                 drive_pos = 7.5
                 PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
         else:    
-            servo_pos = int(decode[3:7])
-            lt = int(decode[10:13]) # 7.5 to 5 for accelerate
-            rt = int(decode[16:20]) # 7.5 to 8.5 for reverse
+            servo_pos = float(decode[2:decode.find("L")])
+            lt = float(decode[decode.find("L")+1:decode.find("R")]) # 7.5 to 5 for accelerate
+            rt = float(decode[decode.find("R")+1:]) # 7.5 to 8.5 for reverse
 
         #Servo changes
         servo_cycle = (0.055*(float(servo_pos)) + 3)
@@ -175,7 +176,7 @@ def main():
         #calibrate('')
         
         #c.close()
-        break
+        
 
 
 if __name__ == "__main__":
