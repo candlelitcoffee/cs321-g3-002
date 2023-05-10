@@ -63,9 +63,9 @@ def main():
                 if event.axis == 0 or event.axis == 4 or event.axis == 5:
                     print("Joystick: " + str(joystick.get_axis(0)))
                     #print("current prevAxis: " + str(prevAxis))
-                    joy_stick = joystick.get_axis(0) * 10 + 105
-                    rounded_stick = round(joy_stick, 4)
-                    string_Stick = "{:04f}".format(rounded_stick)
+                    joy_stick = ((joystick.get_axis(0) + 1) / 2) * (150 - 60) + 60
+                    #rounded_stick = round(joy_stick, 4)
+                    string_Stick = "{:04f}".format(joy_stick)
                     print("string_Stick: " + string_Stick)
 
                     print("Left Trigger: " + str(joystick.get_axis(4)))

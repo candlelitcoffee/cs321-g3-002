@@ -147,7 +147,7 @@ def main():
                 drive_pos = 7.5
                 PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
         else:    
-            servo_pos = float(decode[2:decode.find("L")])
+            servo_pos = float(decode[1:decode.find("L")])
             lt = float(decode[decode.find("L")+1:decode.find("R")]) # 7.5 to 5 for accelerate
             rt = float(decode[decode.find("R")+1:]) # 7.5 to 8.5 for reverse
 
