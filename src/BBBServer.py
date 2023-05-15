@@ -68,7 +68,7 @@ def main():
    
     global ffmpegCmd
     IP = get_ip()
-    port = 55334
+    port = 5533
     udp_link = ""
 
     print("Your BeagleBone's IP is: " + IP + "\n")
@@ -79,29 +79,29 @@ def main():
     BeagleBone_IP = f"!{IP}".encode()
     print("BB_IP after formatting: " + str(BeagleBone_IP))
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind((IP, port))  # Receive the UDP link from server.
-    sock.sendto(BeagleBone_IP, (laptopIP, port))  # Send BB IP to server.
+    sock.bind((IP, port))  
+    sock.sendto(BeagleBone_IP, (laptopIP, port))  
 
     
     #getting udp link
     udp_link = ""
-    while True:  # Program will block here until we send a link to stream to. Use reconnect in mainL, press start.
-        message = sock.recv(30)
+    while True:  
+        message = sock.recv(100)
         decoded = message.decode()
-        if decoded.startswith("L"):  # This happens when we send controller data when reconnecting, just ignore it.
+        if decoded.startswith("L"):  
             continue
-        if decoded.startswith("u"):  # This means we received a UDP link to stream to.
+        if decoded.startswith("u"):  
             udp_link = decoded
-            sock.sendto(b"Received", (laptopIP, port))  # Confirm to ControlTower that we received a video link.
+            sock.sendto(b"Received", (laptopIP, port))  
             break
         elif decoded.startswith("N"):
             sock.sendto(b"Received", (laptopIP, port))
             udp_link = "No video link supplied. Will not be streaming."
             break
 
-    if not udp_link.startswith("N"):  # This means that we have an actual UDP link to stream to. Run ffmpeg command.
-        ffmpegCmd[20] = udp_link  # Put UDP link into ffmpegCmd list.
-        p = subprocess.Popen(ffmpegCmd)  # Run ffmpeg as a background task, no logs. Will not block.
+    if not udp_link.startswith("N"):  
+        ffmpegCmd[20] = udp_link  
+        p = subprocess.Popen(ffmpegCmd)  
         print(f"Ffmpeg command ran, streaming to {ffmpegCmd[20]}")
     
 
@@ -115,7 +115,7 @@ def main():
     # an error occurs
     while True:
 
-        message = sock.recv(30)
+        message = sock.recv(100)
         decode = message.decode()
 
         print("Decoded message: " + decode)
@@ -148,8 +148,8 @@ def main():
                 PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
         else:    
             servo_pos = float(decode[1:decode.find("L")])
-            lt = float(decode[decode.find("L")+1:decode.find("R")]) # 7.5 to 5 for accelerate
-            rt = float(decode[decode.find("R")+1:]) # 7.5 to 8.5 for reverse
+            lt = float(decode[decode.find("L")+1:decode.find("R")]) 
+            rt = float(decode[decode.find("R")+1:])
 
         #Servo changes
         servo_cycle = (0.055*(float(servo_pos)) + 3)
@@ -157,7 +157,7 @@ def main():
         print("the servo pos and cycle "+ str(servo_pos) + " " + str(servo_cycle))
 
         
-        if lt != 0.0 and rt == 0.0:  # Reversing only allowed if right trigger is off and left trigger is not off.
+        if lt != 0.0 and rt == 0.0:  
             print("I am going backward")
             if 7.7 > drive_pos:     #might wanna include 7.7 too here
                 drive_pos += lt
@@ -175,7 +175,7 @@ def main():
         #calibrate()
         #calibrate('')
         
-        #c.close()
+        #sock.close()
         
 
 

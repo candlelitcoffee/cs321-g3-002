@@ -16,15 +16,16 @@ def main():
     global BeagleBone_IP
 
     # Define the port on which you want to connect
-    port = 55334
+    port = 5533
 
     #RM connections, DO NOT CHANGE ANYTHING
-    RMName = "localhost" #Should be G17
+    RMName = "G17" #Should be G17
     RaceManagement = racer.RaceConnection(RMName)  # Establish connection to Race Management
     RaceManagement.start()  # Will prompt for name, number, and send an integer indicating what stream to record to.
 
     #Connecting to BBB
     fromBB = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
+    print("laptop IP: " + str(socket.gethostbyname(laptopID)))
     fromBB.bind((socket.gethostbyname(laptopID), port))
     toBB = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -32,13 +33,13 @@ def main():
     #Sending UDP video link to BBB.
     while True:
         print("inside of while")
-        data = fromBB.recv(30)
+        data = fromBB.recv(100)
         decoded = data.decode()
         print("message: " + decoded)
         if decoded.startswith("!"):
             BeagleBone_IP = decoded[1:]  # Now BeagleBone_IP has been loaded with BeagleBone's IP.
             print(f"Got BeagleBone_IP: {BeagleBone_IP}")
-            bytes_udp = RaceManagement.sendFeed.encode()
+            bytes_udp = RaceManagement.sendFeed.encode() #the link where you'll stream the video (RM frontend)
             fromBB.sendto(bytes_udp, (BeagleBone_IP, port))  # Send UDP video link to BeagleBone.
         elif decoded.startswith("R"):
             break  # UDP Address received by the BBB.
@@ -83,7 +84,6 @@ def main():
                     s = f"S{string_Stick}L{string_left_trigger}R{string_right_trigger}"  
                     bytes_s = s.encode()
                     toBB.sendto(bytes_s, (BeagleBone_IP, port))
-
             if event.type == JOYBUTTONDOWN:
                 print("Button Number: " + str(event.button))
                 if event.button == 1: #Button B
@@ -108,7 +108,8 @@ def main():
                     RaceManagement.send_throttle(0) 
                     
     # close the connection
-    #toBB.close()	
+    #toBB.close()
+    #fromBB.close()	
 
 
 if __name__ == "__main__":
