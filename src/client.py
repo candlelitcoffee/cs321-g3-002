@@ -14,7 +14,7 @@ video_feed_test = "None"
 def main():
 
     global BeagleBone_IP
-
+    
     # Define the port on which you want to connect
     port = 5533
 
@@ -69,13 +69,13 @@ def main():
                     print("string_Stick: " + string_Stick)
 
                     print("Left Trigger: " + str(joystick.get_axis(4)))
-                    left_trigger = joystick.get_axis(4) + 1    # setting values to 0-2, once joystick values reach 0 increase motor speed by only 0.2
+                    left_trigger = (joystick.get_axis(4) + 1) * 50    # setting values to 0-2, once joystick values reach 0 increase motor speed by only 0.2
                     string_left_trigger = "{:03f}".format(left_trigger)
                     print("string_left_trigger: " + string_left_trigger)
                     RaceManagement.send_throttle(round(left_trigger * -50)) 
                 
                     print("Right Trigger: " + str(joystick.get_axis(5)))
-                    right_trigger = joystick.get_axis(5) + 1    # setting values to 0-2, once joystick values reach 0 increase motor speed by only 0.2
+                    right_trigger = (joystick.get_axis(5) + 1) * 50   # setting values to 0-2, once joystick values reach 0 increase motor speed by only 0.2
                     string_right_trigger = "{:03f}".format(right_trigger)
                     print("string_right_trigger: " + string_right_trigger)
                     RaceManagement.send_throttle(round(right_trigger * 50)) 
