@@ -16,7 +16,7 @@ def main():
     global BeagleBone_IP
     
     # Define the port on which you want to connect
-    port = 5533
+    port = 3322
 
     #RM connections, DO NOT CHANGE ANYTHING
     RMName = "G17" #Should be G17

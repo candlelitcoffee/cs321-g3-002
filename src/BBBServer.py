@@ -68,7 +68,7 @@ def main():
    
     global ffmpegCmd
     IP = get_ip()
-    port = 5533
+    port = 3322
     udp_link = ""
 
     print("Your BeagleBone's IP is: " + IP + "\n")
