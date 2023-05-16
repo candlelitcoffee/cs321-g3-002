@@ -46,7 +46,6 @@ def main():
     
     
     #Car controls loop
-    
     pygame.init()
     joystick = pygame.joystick.Joystick(0)  
     joystick.init()

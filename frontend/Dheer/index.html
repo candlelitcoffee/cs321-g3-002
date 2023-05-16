@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Jerry Leclerc</title>
+	<link rel="stylesheet" href="style.css">
+	
+</head>
+<body>
+	<canvas id="LeftCanvas" width="1270" height="600"></canvas>
+	<script type="text/javascript" src="script.js"></script> 
+	<div class="video">
+		<iframe id="feed" src = "http://192.168.152.1:8889/cam2" > </iframe>
+	</div>
+
+	<div class="IP">
+		<label for="RMIP">Video Feed URL:</label>
+    	<input type="text" id="RMIP" name="IP Address of RM" placeholder="http://127.0.0.1:8554/cam1">
+		<button class="button-84" id="button-84" role="button" onclick="changeStream()">Change stream</button>
+	</div>
+</body>
+</html>

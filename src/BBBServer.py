@@ -160,7 +160,7 @@ def main():
         if lt != 0.0 and rt == 0.0:  
             print("I am going backward")
             if 7.7 > drive_pos:     #might wanna include 7.7 too here
-                drive_pos += lt
+                drive_pos += lt     #map this directly to the trigger values instead of adding here 
                 PWM.set_duty_cycle(DRIVE_PIN, drive_pos)
                 print("motor forward duty cycle: " + str(drive_pos))
         else:
